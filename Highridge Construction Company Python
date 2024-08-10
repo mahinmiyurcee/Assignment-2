@@ -1,0 +1,83 @@
+import random
+
+def generate_workers(num_workers=400):
+    """
+    Generates a list of workers with randomly assigned salaries and genders.
+    
+    Args:
+        num_workers (int): Number of workers to generate. Default is 400.
+    
+    Returns:
+        list: List of dictionaries where each dictionary represents a worker.
+    """
+    workers = []
+    for i in range(1, num_workers + 1):
+        worker = {
+            "id": i,
+            "name": f"Worker {i}",
+            "salary": random.randint(5000, 35000),
+            "gender": random.choice(["M", "F"])
+        }
+        workers.append(worker)
+    return workers
+
+def assign_employee_level(worker):
+    """
+    Assigns employee level based on the worker's salary and gender.
+    
+    Args:
+        worker (dict): A dictionary representing a worker.
+    
+    Returns:
+        str: Employee level based on conditional criteria.
+    """
+    if 10000 < worker["salary"] < 20000:
+        return "A1"
+    if 7500 < worker["salary"] < 30000 and worker["gender"] == "F":
+        return "A5-F"
+    return "Unclassified"
+
+def generate_payment_slips(workers):
+    """
+    Generates payment slips for a list of workers.
+    
+    Args:
+        workers (list): List of workers.
+    
+    Returns:
+        list: List of dictionaries where each dictionary represents a payment slip.
+    """
+    payment_slips = []
+    for worker in workers:
+        payment_slip = {
+            "id": worker["id"],
+            "name": worker["name"],
+            "salary": worker["salary"],
+            "gender": worker["gender"],
+            "employee_level": assign_employee_level(worker)
+        }
+        payment_slips.append(payment_slip)
+    return payment_slips
+
+def main():
+    """
+    Main function to generate workers and payment slips with error handling.
+    """
+    try:
+        workers = generate_workers()
+        payment_slips = generate_payment_slips(workers)
+        
+        # Optional: If pandas is available, save to a CSV
+        try:
+            import pandas as pd
+            df = pd.DataFrame(payment_slips)
+            df.to_csv('payment_slips.csv', index=False)
+            print("Payment slips saved to 'payment_slips.csv'.")
+        except ImportError:
+            print(payment_slips)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    main()

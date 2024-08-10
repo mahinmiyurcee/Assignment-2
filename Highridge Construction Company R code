@@ -1,0 +1,55 @@
+generate_workers <- function(num_workers = 400) {
+  workers <- list()
+  for (i in 1:num_workers) {
+    worker <- list(
+      id = i,
+      name = paste("Worker", i),
+      salary = sample(5000:35000, 1),
+      gender = sample(c("M", "F"), 1)
+    )
+    workers[[i]] <- worker
+  }
+  return(workers)
+}
+
+assign_employee_level <- function(worker) {
+  if (worker$salary > 10000 & worker$salary < 20000) {
+    return("A1")
+  } else if (worker$salary > 7500 & worker$salary < 30000 & worker$gender == "F") {
+    return("A5-F")
+  } else {
+    return("Unclassified")
+  }
+}
+
+generate_payment_slips <- function(workers) {
+  payment_slips <- list()
+  for (worker in workers) {
+    slip <- list(
+      id = worker$id,
+      name = worker$name,
+      salary = worker$salary,
+      gender = worker$gender,
+      employee_level = assign_employee_level(worker)
+    )
+    payment_slips <- append(payment_slips, list(slip))
+  }
+  return(payment_slips)
+}
+
+main <- function() {
+  tryCatch({
+    workers <- generate_workers()
+    payment_slips <- generate_payment_slips(workers)
+    
+    # Optional: Save to a CSV file
+    payment_slips_df <- do.call(rbind.data.frame, payment_slips)
+    write.csv(payment_slips_df, "payment_slips_1.csv", row.names = FALSE)
+    
+    print("Payment slips have been generated and saved to 'payment_slips.csv'.")
+  }, error = function(e) {
+    cat("An error occurred:", e$message, "\n")
+  })
+}
+
+main()
